@@ -1,0 +1,6 @@
+name: McREST
+version: ${project.version}
+main: org.codemadness.mcrest.McREST
+prefix: MC|REST
+authors: [knee_97]
+website: code-madness.de
