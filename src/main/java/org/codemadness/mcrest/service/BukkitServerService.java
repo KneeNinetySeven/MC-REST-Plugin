@@ -23,7 +23,7 @@ public class BukkitServerService {
     @GET
     @Path("/info")
     @Produces(APPLICATION_JSON)
-    public String bukkitServerInfo() throws JsonProcessingException {
+    public String bukkitServerInfo() {
 
         String name = Bukkit.getName();
         String motd = Bukkit.getMotd();
@@ -37,21 +37,46 @@ public class BukkitServerService {
                 .maxPlayers(maxPlayers)
                 .build();
 
-        return new ObjectMapper().writeValueAsString(serverInfo);
+        try {
+            return new ObjectMapper().writeValueAsString(serverInfo);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "Fuck.";
     }
 
     @GET
     @Path("/players")
     @Produces(APPLICATION_JSON)
     public String getOnlinePlayers() {
-        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
-        List<PlayerDTO> dtoList = players.stream().map(PlayerDTO::new).collect(Collectors.toList());
+        List<PlayerDTO> dtoList = getPlayers(null);
         try {
             return new ObjectMapper().writeValueAsString(dtoList);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
         return "Fuck.";
+    }
+
+    @GET
+    @Path("/players/{uuid}")
+    @Produces(APPLICATION_JSON)
+    public String getOnlinePlayers(@PathParam("uuid") String uuid) {
+        List<PlayerDTO> dtoList = getPlayers(uuid);
+        try {
+            return new ObjectMapper().writeValueAsString(dtoList);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "Fuck.";
+    }
+
+    private List<PlayerDTO> getPlayers(String uuid) {
+        Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
+        if (uuid != null && !uuid.isEmpty()) {
+            players = players.stream().filter(player -> player.getUniqueId().toString().equals(uuid)).collect(Collectors.toList());
+        }
+        return players.stream().map(PlayerDTO::new).collect(Collectors.toList());
     }
 
 }

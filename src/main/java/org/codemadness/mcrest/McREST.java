@@ -2,6 +2,7 @@ package org.codemadness.mcrest;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.codemadness.mcrest.providers.CORSProvider;
 import org.codemadness.mcrest.service.BukkitServerService;
 import org.codemadness.mcrest.service.HalloWeltService;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -24,7 +25,8 @@ public final class McREST extends JavaPlugin {
 
         final ResourceConfig rc = new ResourceConfig()
                 .register(HalloWeltService.class)
-                .register(BukkitServerService.class);
+                .register(BukkitServerService.class)
+                .register(CORSProvider.class);
 
         httpServer = GrizzlyHttpServerFactory.createHttpServer(serverUri, rc);
 
